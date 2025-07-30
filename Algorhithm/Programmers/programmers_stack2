@@ -1,0 +1,23 @@
+def solution(progresses, speeds):
+    answer = []
+    restDays = []
+    
+    for i in range(len(progresses)): #리스트 길이 만큼 또는 정수 만큼 반복하려면 range() 사용
+        restPercent = 100 - progresses[i]
+        if restPercent%speeds[i] != 0:
+            restDays.append(restPercent//speeds[i] + 1)
+        else:
+            restDays.append(restPercent//speeds[i])
+    print(restDays)        
+    max = restDays[0]
+    count = 0
+    days = 0
+    for i in restDays:
+        if i <= max:
+            count += 1
+        else:
+            max = i
+            answer.append(count)
+            count = 1
+    answer.append(count)
+    return answer

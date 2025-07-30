@@ -1,0 +1,14 @@
+def solution(arr):
+    answer = []
+    setArr = set()
+    #빈 set을 선언하려 {}만 쓴다면 default 자료형으로 dic이 들어간다
+    
+    for i in arr:
+        if i not in setArr:
+            #연속된 값을 찾아야하므로 중복되지 않은 것이 생기면 set변수를 초기화시킨다
+            setArr.clear() 
+            #set에 i를 넣고 같은 것이 있을 경우 중복 처리하지 않도록 한다
+            setArr.add(i)
+            #중복되지 않은 값을 순서대로 넣기 위해 바로 뒤에 붙여준다
+            answer.append(i)
+    return answer

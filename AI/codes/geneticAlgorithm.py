@@ -1,0 +1,65 @@
+import random
+
+# 유전자: 8개의 숫자로 구성(각 숫자는 각 행에서 퀸이 위치한 열을 의미)
+
+#적합도 함수
+def fitness(chromosome):
+    non_attacking_pairs = 28  # 총 8C2 (8개의 퀸 중 중복하지 않고 2개를 선택)
+    
+    for i in range(len(chromosome)):
+        for j in range(i + 1, len(chromosome)):
+            if chromosome[i] == chromosome[j] or abs(chromosome[i] - chromosome[j]) == abs(i - j):
+                non_attacking_pairs -= 1  # 같은 열 또는 대각선에 위치하면 감소
+    
+    return non_attacking_pairs
+
+#초기 개체군 생성
+def generate_population(size=100):
+    return [random.sample(range(8), 8) for _ in range(size)]
+
+# 부모 선택 (룰렛 휠 방식)
+# 룰렛 휠 방식: 개체의 적합도를 기반으로 선택 확률 결정
+# 적합도가 높을수록 선택될 확률이 증가한다.
+def selection(population):
+    population = sorted(population, key=lambda x: fitness(x), reverse=True)
+    return population[:20]  # 상위 20개 선택
+
+# 부분 교차
+def crossover(parent1, parent2):
+    point = random.randint(1, 7)  # 1부터 7 사이에서 교차점 선택
+    child = parent1[:point] + parent2[point:]
+    return child
+
+# 변이 연산 ( 일정 확률로 유전자 변경 )
+def mutate(chromosome, mutation_rate=0.2):
+    if random.random() < mutation_rate:
+        i, j = random.sample(range(8), 2)  # 두 개의 위치를 랜덤하게 선택
+        chromosome[i], chromosome[j] = chromosome[j], chromosome[i]  # 위치 변경
+    return chromosome
+
+# 유전자 알고리즘
+def genetic_algorithm(max_generations=1000):
+    population = generate_population()
+    
+    for generation in range(max_generations):
+        population = selection(population)
+        new_population = []
+        
+        while len(new_population) < 100:
+            parent1, parent2 = random.sample(population, 2)
+            child = crossover(parent1, parent2)
+            child = mutate(child)
+            new_population.append(child)
+        
+        population = new_population
+        best_solution = max(population, key=fitness)
+        
+        if fitness(best_solution) == 28:
+            print(f"Solution found at generation {generation}")
+            return best_solution
+    
+    return None
+
+#############################################################################################
+solution = genetic_algorithm()
+print("Final Solution:", solution)
